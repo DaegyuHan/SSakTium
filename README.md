@@ -45,6 +45,35 @@
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
 ![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)
 
+## 🌱 맡은 업무
+<details>
+  <summary>한대규(리더)</summary>
+  
+- 유저 및 인증 도메인 백엔드 개발
+  - 구글, 네이버, 카카오 로그인/회원가입을 위한 Oauth 2.0 구현
+  - Refresh Token 도입으로 보안성 및 사용자 편의성 향상
+  - 회원가입 시 Email 인증 기능 구현 및 비동기 처리 도입으로 응답시간 약 75.2% 감소
+
+- 식물 도감 도메인 백엔드 개발
+- 상품 도메인 백엔드 개발
+- 결제 도메인 백엔드 개발
+  - Toss Payments  를 활용하여 결제 시스템 도입
+  - 쿠폰 기능과 연계해 할인 기능 구현
+
+- 장바구니 도메인 백엔드 개발
+  - Redis 를 활용하여 장바구니 추가, 삭제, 결제 기능 구현
+
+- 쿠폰 도메인 백엔드 개발
+  - Lua Script 를 활용하여 동시성 문제 해결 및 응답시간 기존 구현 대비 약 95% 감소
+
+- CI/CD 배포
+  - GitHub + Github Actions+ Docker를 이용한 배포 구현
+  - System Architecture 작성, AWS 인프라 구성
+
+- Frontend
+  - Thymleaf 를 사용하여 로그인, 쿠폰 발급, 장바구니, 결제 등 프론트엔드 기능 구현
+</details>
+
 ## 🍀 Key-Summary
 <details>
   <summary>대용량 알림 발생 시 동기/비동기 처리 방식에 대한 의사결정</summary>
