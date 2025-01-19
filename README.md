@@ -577,7 +577,8 @@ Spring Security 의 logout 기능을 사용해 logout 시 Cookie 에 저장된 T
 
 
 # 🍀 ERD
-![img](https://img.notionusercontent.com/s3/prod-files-secure%2F83c75a39-3aba-4ba4-a792-7aefe4b07895%2Ffa44ebc8-f5e2-431e-980a-7572af08ef15%2Fimage.png/size/w=2000?exp=1732326390&sig=BjZS7N1Vj3RGXYaI2pBsPmqljd11qcFqvxVSL5eoNJ4)
+![image](https://github.com/user-attachments/assets/f813c0ca-70a5-4651-8d95-f39daae5584d)
+
 
 ## 🌹 인프라 설계도
 ![image](https://github.com/user-attachments/assets/deeedb42-95e4-49cb-93cf-931933a4501f)
