@@ -24,11 +24,6 @@ public class RedisUserService {
         return redisTemplate.opsForValue().get(key);
     }
 
-    // Access Token 갱신
-    public void updateAccessToken(String userId, String newAccessToken) {
-        redisTemplate.opsForValue().set(userId, newAccessToken, 30, TimeUnit.MINUTES);
-    }
-
     // Refresh Token 삭제
     public void deleteRefreshToken(String userId) {
         String key = "refresh_Token : " + userId;

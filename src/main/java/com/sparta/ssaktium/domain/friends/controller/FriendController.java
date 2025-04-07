@@ -24,6 +24,12 @@ public class FriendController {
 
     private final FriendService friendService;
 
+    @GetMapping("/test")
+    public ResponseEntity<CommonResponse<String>> testKafka(@AuthenticationPrincipal AuthUser authUser) {
+        String responseDto = friendService.testKafka(authUser.getUserId());
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
+
     @PostMapping("/friends/{id}")
     @Operation(summary = "친구 요청", description = "친구 요청할 때 사용하는 API")
     @ApiResponse(responseCode = "200", description = "요청이 성공적으로 처리되었습니다")
