@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,9 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class InternalUserController {
 
     @GetMapping("/me")
-    public ResponseEntity<UserInfoResponseDto> getMyInfo(@AuthenticationPrincipal
-                                                          AuthUser authUser) {
-        log.info("FeignClient 작동 "+ authUser.getUserId());
-        return ResponseEntity.ok(new UserInfoResponseDto(authUser.getUserId()));
+    public ResponseEntity<UserInfoResponseDto> getMyInfo(@RequestHeader("X-User-Id") Long userId) {
+        log.info("FeignClient 작동 "+ userId);
+        return ResponseEntity.ok(new UserInfoResponseDto(userId));
     }
 }

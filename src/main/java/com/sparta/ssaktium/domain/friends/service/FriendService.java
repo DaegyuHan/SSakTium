@@ -129,4 +129,8 @@ public class FriendService {
     public List<User> findFriends(long userId) {
         return friendRepository.findFriendsByUser(userId, FriendStatus.ACCEPTED);
     }
+
+    public List<Long> getFollowerIds(Long userId) {
+        return friendRepository.findFollowerIdsByUserId(userId);
+    }
 }
