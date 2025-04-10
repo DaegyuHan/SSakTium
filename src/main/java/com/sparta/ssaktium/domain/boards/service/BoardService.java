@@ -86,12 +86,11 @@ public class BoardService {
         //elastic에 저장
         boardSearchRepository.save(boardDocument);
 
-        // 친구 관계인 모든 유저에게 알림 발송
-        List<User> friends = friendService.findFriends(userId);
-        friends.forEach(friend -> notificationProducer.sendNotification(
-                new NotificationMessage(friend.getId(),
-                        EventType.FRIEND_BOARD,
-                        "유저 이름 : " + user.getUserName() + "제목 : " + requestDto.getTitle()))
+        notificationProducer.sendNotification(
+                new NotificationMessage(
+                        user.getId(),
+                        EventType.POST_CREATED,
+                        requestDto.getTitle())
         );
 
         //responseDto 반환

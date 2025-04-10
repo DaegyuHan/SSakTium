@@ -1,6 +1,7 @@
 package com.sparta.ssaktium.domain.friends.repository;
 
 
+import com.sparta.ssaktium.domain.friends.dto.responseDto.FollowerResponseDto;
 import com.sparta.ssaktium.domain.friends.entity.FriendStatus;
 import com.sparta.ssaktium.domain.friends.entity.Friend;
 import com.sparta.ssaktium.domain.users.entity.User;
