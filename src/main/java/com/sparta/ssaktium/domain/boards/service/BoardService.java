@@ -20,7 +20,7 @@ import com.sparta.ssaktium.domain.friends.service.FriendService;
 import com.sparta.ssaktium.domain.likes.LikeRedisService;
 import com.sparta.ssaktium.domain.likes.boardLikes.repository.BoardLikeRepository;
 import com.sparta.ssaktium.domain.notifications.dto.EventType;
-import com.sparta.ssaktium.domain.notifications.dto.NotificationMessage;
+import com.sparta.ssaktium.domain.notifications.service.NotificationOutboxService;
 import com.sparta.ssaktium.domain.notifications.service.NotificationProducer;
 import com.sparta.ssaktium.domain.users.entity.User;
 import com.sparta.ssaktium.domain.users.enums.UserRole;
@@ -50,6 +50,7 @@ public class BoardService {
     private final LikeRedisService likeRedisService; // 좋아요 수 반영을 위함
     private final NotificationProducer notificationProducer;
     private final BoardLikeRepository boardLikeRepository;
+    private final NotificationOutboxService notificationOutboxService;
 
 
     @Transactional
@@ -86,11 +87,19 @@ public class BoardService {
         //elastic에 저장
         boardSearchRepository.save(boardDocument);
 
-        notificationProducer.sendNotification(
-                new NotificationMessage(
-                        user.getId(),
-                        EventType.POST_CREATED,
-                        requestDto.getTitle())
+        // 알림 전송
+//        notificationProducer.sendNotification(
+//                new NotificationMessage(
+//                        user.getId(),
+//                        EventType.POST_CREATED,
+//                        requestDto.getTitle())
+//        );
+
+        // 아웃박스 패턴
+        notificationOutboxService.saveOutbox(
+                user.getId(),
+                EventType.POST_CREATED,
+                requestDto.getTitle()
         );
 
         //responseDto 반환
