@@ -1,6 +1,7 @@
 package com.sparta.ssaktium.domain.notifications.entity;
 
 import com.sparta.ssaktium.domain.notifications.dto.EventType;
+import com.sparta.ssaktium.domain.notifications.dto.NotificationMessage;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ public class NotificationOutbox {
 
     private String message;
 
-    private boolean sent = false;
+    private boolean sent = true;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -36,5 +37,9 @@ public class NotificationOutbox {
 
     public void markAsSent() {
         this.sent = true;
+    }
+
+    public void markAsUnsent() {
+        this.sent = false;
     }
 }

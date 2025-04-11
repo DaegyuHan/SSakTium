@@ -5,6 +5,7 @@ import com.sparta.ssaktium.domain.notifications.entity.NotificationOutbox;
 import com.sparta.ssaktium.domain.notifications.repository.NotificationOutboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,8 @@ public class NotificationOutboxScheduler {
     private final NotificationOutboxRepository outboxRepository;
     private final NotificationProducer notificationProducer;
 
-    @Scheduled(fixedDelay = 5000)
+
+    @Scheduled(fixedDelay = 15000)
     public void sendUnsentMessages() {
         List<NotificationOutbox> messages = outboxRepository.findTop50BySentFalseOrderByCreatedAtAsc();
 

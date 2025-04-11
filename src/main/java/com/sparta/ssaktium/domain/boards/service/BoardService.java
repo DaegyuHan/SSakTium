@@ -20,6 +20,7 @@ import com.sparta.ssaktium.domain.friends.service.FriendService;
 import com.sparta.ssaktium.domain.likes.LikeRedisService;
 import com.sparta.ssaktium.domain.likes.boardLikes.repository.BoardLikeRepository;
 import com.sparta.ssaktium.domain.notifications.dto.EventType;
+import com.sparta.ssaktium.domain.notifications.dto.NotificationMessage;
 import com.sparta.ssaktium.domain.notifications.service.NotificationOutboxService;
 import com.sparta.ssaktium.domain.notifications.service.NotificationProducer;
 import com.sparta.ssaktium.domain.users.entity.User;
@@ -88,18 +89,11 @@ public class BoardService {
         boardSearchRepository.save(boardDocument);
 
         // 알림 전송
-//        notificationProducer.sendNotification(
-//                new NotificationMessage(
-//                        user.getId(),
-//                        EventType.POST_CREATED,
-//                        requestDto.getTitle())
-//        );
-
-        // 아웃박스 패턴
-        notificationOutboxService.saveOutbox(
-                user.getId(),
-                EventType.POST_CREATED,
-                requestDto.getTitle()
+        notificationProducer.sendWithOutbox(
+                new NotificationMessage(
+                        user.getId(),
+                        EventType.POST_CREATED,
+                        requestDto.getTitle())
         );
 
         //responseDto 반환
