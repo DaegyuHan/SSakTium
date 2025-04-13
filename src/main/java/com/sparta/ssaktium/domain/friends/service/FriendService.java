@@ -32,14 +32,6 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final NotificationProducer notificationProducer;
 
-    public String testKafka(Long userId) {
-        notificationProducer.sendNotification(
-                new NotificationMessage(userId,
-                        EventType.FRIEND_REQUESTED,
-                        "test"));
-        return "카프카 테스트";
-    }
-
     @Transactional
     public FriendResponseDto requestFriend(Long userId, Long friendId) {
 

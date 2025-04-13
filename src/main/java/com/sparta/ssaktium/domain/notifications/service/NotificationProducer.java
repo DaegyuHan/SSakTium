@@ -18,6 +18,7 @@ public class NotificationProducer {
     private final NotificationOutboxRepository notificationOutboxRepository;
 
     public void sendNotification(NotificationMessage message) {
+//        throw new RuntimeException("💥 테스트용 강제 예외 발생");
         kafkaTemplate.send("notifications", message);
     }
 
@@ -30,9 +31,9 @@ public class NotificationProducer {
         );
 
         try {
-            if (true) {
-                throw new RuntimeException("💥 고의로 발생시킨 Kafka 예외");
-            }
+//            if (true) {
+//                throw new RuntimeException("💥 고의로 발생시킨 Kafka 예외");
+//            }
             kafkaTemplate.send("notifications", message);
             log.info("✅ Kafka 전송 성공");
         } catch (Exception e) {

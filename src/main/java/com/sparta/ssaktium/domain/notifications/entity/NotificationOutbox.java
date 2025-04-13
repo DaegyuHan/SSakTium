@@ -27,6 +27,8 @@ public class NotificationOutbox {
 
     private boolean sent = true;
 
+    private boolean dlq = false;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public NotificationOutbox(Long userId, EventType eventType, String message) {
@@ -37,9 +39,14 @@ public class NotificationOutbox {
 
     public void markAsSent() {
         this.sent = true;
+        this.dlq = false;
     }
 
     public void markAsUnsent() {
         this.sent = false;
+    }
+
+    public void markAsDlq() {
+        this.dlq = true;
     }
 }
