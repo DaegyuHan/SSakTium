@@ -3,6 +3,6 @@ package com.sparta.ssaktium.domain.notifications.dto;
 public enum EventType {
     FRIEND_REQUESTED,
     FRIEND_ACCEPTED,
-    FRIEND_BOARD,
+    POST_CREATED,
     PLANT_MANAGE
 }

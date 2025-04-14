@@ -88,10 +88,4 @@ public class UserController {
                                                              UserCheckPasswordRequestDto userCheckPasswordRequestDto) {
         return ResponseEntity.ok(CommonResponse.success(userService.deleteUser(authUser.getUserId(), id, userCheckPasswordRequestDto)));
     }
-
-    // 유저 십만 건 저장
-    @PostMapping("/v2/add-user")
-    public ResponseEntity<String> pushUsers() {
-        return ResponseEntity.ok(userService.pushUsers());
-    }
 }

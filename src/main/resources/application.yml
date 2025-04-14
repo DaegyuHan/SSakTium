@@ -16,7 +16,7 @@ spring:
           ssl:
             trust: smtp.gmail.com
   profiles:
-    active: dev
+    active: local
 
 #data:
 #  redis:

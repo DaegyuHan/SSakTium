@@ -1,6 +1,7 @@
 package com.sparta.ssaktium.domain.friends.repository;
 
 
+import com.sparta.ssaktium.domain.friends.dto.responseDto.FollowerResponseDto;
 import com.sparta.ssaktium.domain.friends.entity.FriendStatus;
 import com.sparta.ssaktium.domain.friends.entity.Friend;
 import com.sparta.ssaktium.domain.users.entity.User;
@@ -30,4 +31,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
             "OR (f.friendUser.id = :userId AND f.friendStatus = :status)")
     List<User> findFriendsByUser(@Param("userId") Long userId, @Param("status") FriendStatus status);
 
+    @Query("SELECT f.user.id FROM Friend f " +
+            "WHERE f.friendUser.id = :userId AND f.friendStatus = 'ACCEPTED'")
+    List<Long> findFollowerIdsByUserId(@Param("userId") Long userId);
 }

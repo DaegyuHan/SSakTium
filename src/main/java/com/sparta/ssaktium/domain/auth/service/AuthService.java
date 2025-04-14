@@ -55,7 +55,7 @@ public class AuthService {
         );
         User savedUser = userRepository.save(newUser);
 
-        String bearerToken = jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUserName(), userRole);
+        String bearerToken = jwtUtil.createAccessToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUserName(), userRole);
 
         return new SignupResponseDto(bearerToken);
     }
@@ -75,11 +75,13 @@ public class AuthService {
             throw new UnauthorizedPasswordException();
         }
 
-        String bearerToken = jwtUtil.createToken(user.getId(), user.getEmail(), user.getUserName(), user.getUserRole());
+        String accessToken = jwtUtil.createAccessToken(user.getId(), user.getEmail(), user.getUserName(), user.getUserRole());
+        String refreshToken = jwtUtil.createRefreshToken(user.getId());
 
         log.info("로그인 성공");
-        log.info(bearerToken);
+        log.info("access Token : {}", accessToken);
+        log.info("refresh Token : {}", refreshToken);
 
-        return bearerToken;
+        return accessToken;
     }
 }

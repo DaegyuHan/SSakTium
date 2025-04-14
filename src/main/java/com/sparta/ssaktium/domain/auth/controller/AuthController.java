@@ -10,6 +10,7 @@ import com.sparta.ssaktium.domain.common.dto.AuthUser;
 import com.sparta.ssaktium.domain.users.entity.User;
 import com.sparta.ssaktium.domain.users.enums.UserRole;
 import com.sparta.ssaktium.domain.users.repository.UserRepository;
+import com.sparta.ssaktium.domain.users.service.RedisUserService;
 import com.sparta.ssaktium.domain.users.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -40,6 +41,7 @@ import java.util.List;
 public class AuthController {
 
     private final AuthService authService;
+    private final RedisUserService redisUserService;
 
     @GetMapping("/signin")
     public String signin() {
@@ -90,7 +92,8 @@ public class AuthController {
     }
 
     @PostMapping("/v2/auth/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    public String logout(@AuthenticationPrincipal AuthUser authUser, HttpServletRequest request, HttpServletResponse response) {
+        redisUserService.deleteRefreshToken(String.valueOf(authUser.getUserId()));
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             // SecurityContextLogoutHandler로 로그아웃 처리
