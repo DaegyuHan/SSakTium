@@ -46,7 +46,7 @@ public class AdminAuthService {
         User savedUser = userRepository.save(newUser);
 
         // 토큰 생성
-        String bearerToken = jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUserName(), userRole);
+        String bearerToken = jwtUtil.createAccessToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUserName(), userRole);
 
         return new SignupResponseDto(bearerToken);
     }

@@ -69,7 +69,8 @@ public class SecurityConfig {
                                 "/signin",
                                 "/ssaktium/signup", // 회원가입 접근 허용
                                 "/api/v1/query",
-                                "/actuator/*"
+                                "/actuator/*",
+                                "/v1/api/internal/**"
 
                         ).permitAll()
                         .requestMatchers("/ssaktium/main").authenticated() // 인증 필요 경로

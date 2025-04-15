@@ -1,5 +1,6 @@
 package com.sparta.ssaktium.domain.friends.service;
 
+import com.sparta.ssaktium.domain.friends.dto.responseDto.FollowerResponseDto;
 import com.sparta.ssaktium.domain.friends.dto.responseDto.FriendPageResponseDto;
 import com.sparta.ssaktium.domain.friends.dto.responseDto.FriendResponseDto;
 import com.sparta.ssaktium.domain.friends.entity.Friend;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -120,5 +122,12 @@ public class FriendService {
 
     public List<User> findFriends(long userId) {
         return friendRepository.findFriendsByUser(userId, FriendStatus.ACCEPTED);
+    }
+
+    public List<FollowerResponseDto> getFollowerIds(Long userId) {
+        List<Long> ids = friendRepository.findFollowerIdsByUserId(userId);
+        return ids.stream()
+                .map(FollowerResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

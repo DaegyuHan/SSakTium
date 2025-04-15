@@ -1,6 +1,8 @@
 spring:
   application:
     name: ssaktium
+  webhook:
+    discord-url: ${DISCORD_URL}
   mail:
     host: smtp.gmail.com
     port: 587
@@ -16,7 +18,7 @@ spring:
           ssl:
             trust: smtp.gmail.com
   profiles:
-    active: dev
+    active: local
 
 #data:
 #  redis:

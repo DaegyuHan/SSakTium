@@ -21,6 +21,7 @@ import com.sparta.ssaktium.domain.likes.LikeRedisService;
 import com.sparta.ssaktium.domain.likes.boardLikes.repository.BoardLikeRepository;
 import com.sparta.ssaktium.domain.notifications.dto.EventType;
 import com.sparta.ssaktium.domain.notifications.dto.NotificationMessage;
+import com.sparta.ssaktium.domain.notifications.service.NotificationOutboxService;
 import com.sparta.ssaktium.domain.notifications.service.NotificationProducer;
 import com.sparta.ssaktium.domain.users.entity.User;
 import com.sparta.ssaktium.domain.users.enums.UserRole;
@@ -50,6 +51,7 @@ public class BoardService {
     private final LikeRedisService likeRedisService; // 좋아요 수 반영을 위함
     private final NotificationProducer notificationProducer;
     private final BoardLikeRepository boardLikeRepository;
+    private final NotificationOutboxService notificationOutboxService;
 
 
     @Transactional
@@ -86,12 +88,12 @@ public class BoardService {
         //elastic에 저장
         boardSearchRepository.save(boardDocument);
 
-        // 친구 관계인 모든 유저에게 알림 발송
-        List<User> friends = friendService.findFriends(userId);
-        friends.forEach(friend -> notificationProducer.sendNotification(
-                new NotificationMessage(friend.getId(),
-                        EventType.FRIEND_BOARD,
-                        "유저 이름 : " + user.getUserName() + "제목 : " + requestDto.getTitle()))
+        // 알림 전송
+        notificationProducer.sendWithOutbox(
+                new NotificationMessage(
+                        user.getId(),
+                        EventType.POST_CREATED,
+                        requestDto.getTitle())
         );
 
         //responseDto 반환
