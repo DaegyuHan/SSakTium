@@ -27,7 +27,7 @@ public class NotificationOutbox {
 
     private boolean sent = true;
 
-    private boolean dlq = false;
+    private boolean errored = false;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -39,14 +39,14 @@ public class NotificationOutbox {
 
     public void markAsSent() {
         this.sent = true;
-        this.dlq = false;
+        this.errored = false;
     }
 
     public void markAsUnsent() {
         this.sent = false;
     }
 
-    public void markAsDlq() {
-        this.dlq = true;
+    public void markAsErrored() {
+        this.errored = true;
     }
 }

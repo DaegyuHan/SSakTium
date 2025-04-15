@@ -1,5 +1,6 @@
 package com.sparta.ssaktium.domain.notifications.service;
 
+import com.sparta.ssaktium.domain.common.service.WebhookService;
 import com.sparta.ssaktium.domain.notifications.dto.NotificationMessage;
 import com.sparta.ssaktium.domain.notifications.entity.NotificationOutbox;
 import com.sparta.ssaktium.domain.notifications.repository.NotificationOutboxRepository;
@@ -11,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -22,13 +24,14 @@ public class NotificationOutboxScheduler {
     private final NotificationProducer notificationProducer;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    private final String RETRY_PREFIX = "retry:notification:";
+    private static final String RETRY_PREFIX = "retry:notification:";
     private static final int MAX_RETRY = 3;
+    private final WebhookService webhookService;
 
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedDelay = 30000)
     public void sendUnsentMessages() {
         List<NotificationOutbox> messages = outboxRepository
-                .findTop50BySentFalseAndDlqFalseOrderByCreatedAtAsc();
+                .findTop50BySentFalseAndErroredFalseOrderByCreatedAtAsc();
 
         for ( NotificationOutbox outbox : messages ) {
             String retryKey = RETRY_PREFIX + outbox.getId();
@@ -36,8 +39,22 @@ public class NotificationOutboxScheduler {
             redisTemplate.expire(retryKey, Duration.ofMinutes(3));  // 3 분 TIL
 
             if ( retryCount != null && retryCount > MAX_RETRY ) {
-                log.warn(" 전송 재시도 {}회 초과. DLQ 처리 - OutboxId: {}", retryCount, outbox.getId());
-                outbox.markAsDlq();
+                log.warn(" 전송 재시도 3회 초과. 알림 전송 - OutboxId: {}", outbox.getId());
+                String content = String.format(
+                        "**🚨 Kafka 메시지 전송 실패 알림 🚨**\n" +
+                                "**Outbox ID**: `%s`\n" +
+                                "**User ID**: `%s`\n" +
+                                "**Event Type**: `%s`\n" +
+                                "**Retry Count**: `%d`\n" +
+                                "**시간**: `%s`\n",
+                        outbox.getId(),
+                        outbox.getUserId(),
+                        outbox.getEventType(),
+                        retryCount-1,
+                        LocalDateTime.now()
+                );
+                webhookService.sendDiscordNotification(content);
+                outbox.markAsErrored();
                 redisTemplate.delete(retryKey);
                 continue;
             }
@@ -60,31 +77,5 @@ public class NotificationOutboxScheduler {
         }
 
         outboxRepository.saveAll(messages);
-    }
-
-    @Scheduled(fixedDelay = 60000)
-    public void recoverDlqMessages() {
-        List<NotificationOutbox> dlqMessages = outboxRepository.findTop50BySentFalseAndDlqTrueOrderByCreatedAtAsc();
-
-        for (NotificationOutbox outbox : dlqMessages) {
-            try {
-                NotificationMessage kafkaMessage = new NotificationMessage(
-                        outbox.getUserId(),
-                        outbox.getEventType(),
-                        outbox.getMessage()
-                );
-
-                notificationProducer.sendNotification(kafkaMessage);
-                outbox.markAsSent(); // sent = true, dlq = false 설정
-
-                log.info("🔄 DLQ 복구 성공 - outboxId: {}, userId: {}", outbox.getId(), outbox.getUserId());
-
-            } catch (Exception e) {
-                log.error("❌ DLQ 복구 실패 - outboxId: {}, userId: {}", outbox.getId(), outbox.getUserId(), e);
-                // 실패 시 상태 그대로 둠 (다음 스케줄러에서 재시도)
-            }
-        }
-
-        outboxRepository.saveAll(dlqMessages);
     }
 }
