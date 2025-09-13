@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>대량 쿠폰 발급</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 스타일 최소화 -->
+    <style>
+        body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; max-width: 720px; margin: 40px auto; }
+        .row { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+        .bar-wrap { width: 100%; height: 22px; background: #eee; border-radius: 8px; overflow: hidden; }
+        .bar { height: 100%; width: 0%; background: #4f46e5; color: #fff; font-size: 12px; text-align: center; transition: width .2s; }
+        button { padding: 8px 12px; cursor: pointer; }
+        input[type=number] { width: 130px; padding: 6px; }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    </style>
+</head>
+<body>
+<h2>📦 대량 쿠폰 발급 (Redis + Async)</h2>
+
+<div class="row">
+    <label for="total">총 발급 수</label>
+    <input id="total" type="number" value="10000" min="1" step="1">
+    <button id="startBtn">시작</button>
+    <button id="cancelBtn" disabled>취소</button>
+</div>
+
+<p class="mono">jobId: <span id="jobId">-</span></p>
+
+<div class="bar-wrap"><div id="bar" class="bar">0%</div></div>
+<p class="mono" id="detail">0 / 0 (READY)</p>
+
+<script>
+    const startBtn = document.getElementById('startBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const totalInput = document.getElementById('total');
+    const jobIdEl = document.getElementById('jobId');
+    const bar = document.getElementById('bar');
+    const detail = document.getElementById('detail');
+
+    let jobId = null;
+    let timer = null;
+
+    // CommonResponse<T> 형식에서 data 꺼내기
+    async function parseCommon(res) {
+        const json = await res.json();
+        return json?.data !== undefined ? json.data : json;
+    }
+
+    startBtn.addEventListener('click', async () => {
+        const total = totalInput.value || 10000;
+
+        const res = await fetch('/v2/coupon-batch/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ total })
+        });
+
+        const data = await parseCommon(res);
+        jobId = (typeof data === 'string') ? data : (data.jobId || data);
+        jobIdEl.textContent = jobId;
+
+        cancelBtn.disabled = false;
+        startPolling();
+    });
+
+    cancelBtn.addEventListener('click', async () => {
+        if (!jobId) return;
+        await fetch(`/v2/coupon-batch/${jobId}/cancel`, { method: 'POST' });
+    });
+
+    function startPolling() {
+        if (timer) clearInterval(timer);
+        timer = setInterval(async () => {
+            if (!jobId) return;
+
+            const res = await fetch(`/v2/coupon-batch/${jobId}/progress`);
+            const p = await parseCommon(res);
+            const total = Number(p.total || 0);
+            const processed = Number(p.processed || 0);
+            const status = p.status || 'UNKNOWN';
+            const percent = total > 0 ? Math.min(100, Math.round(processed * 100 / total)) : 0;
+
+            bar.style.width = percent + '%';
+            bar.textContent = percent + '%';
+            detail.textContent = `${processed} / ${total} (${status})`;
+
+            if (status !== 'RUNNING') {
+                clearInterval(timer);
+                timer = null;
+                cancelBtn.disabled = true;
+            }
+        }, 300);
+    }
+</script>
+</body>
+</html>

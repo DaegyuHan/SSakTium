@@ -28,7 +28,7 @@ public class NotificationOutboxScheduler {
     private static final int MAX_RETRY = 3;
     private final WebhookService webhookService;
 
-    @Scheduled(fixedDelay = 30000)
+//    @Scheduled(fixedDelay = 30000)
     public void sendUnsentMessages() {
         List<NotificationOutbox> messages = outboxRepository
                 .findTop50BySentFalseAndErroredFalseOrderByCreatedAtAsc();

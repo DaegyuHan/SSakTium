@@ -68,6 +68,7 @@ public class SecurityConfig {
                                 "/signin/*",
                                 "/signin",
                                 "/ssaktium/signup", // 회원가입 접근 허용
+                                "/ssaktium/coupon-batch",
                                 "/api/v1/query",
                                 "/actuator/*",
                                 "/v1/api/internal/**"
